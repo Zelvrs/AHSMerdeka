@@ -48,6 +48,69 @@ public class AHSDBHelper extends SQLiteOpenHelper {
         db.insert(CustomerContract.CustomerTable.TABLE_NAME, null, cv);
     }
 
+    public void updateCustomer(Customer customer) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(CustomerContract.CustomerTable.COLUMN_NAME, customer.getName());
+        cv.put(CustomerContract.CustomerTable.COLUMN_ADDRESS, customer.getAddress());
+        cv.put(CustomerContract.CustomerTable.COLUMN_PHONE, customer.getPhone());
+
+        String[] whereArgs = { String.valueOf(customer.getId()) };
+
+        db.update(CustomerContract.CustomerTable.TABLE_NAME, cv, CustomerContract.CustomerTable.COLUMN_ID + " = ?", whereArgs);
+    }
+
+    public  void  deleteCustomer(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String[] whereArgs = { String.valueOf(id) };
+
+        db.delete(CustomerContract.CustomerTable.TABLE_NAME, CustomerContract.CustomerTable.COLUMN_ID + " = ?", whereArgs);
+    }
+
+    public Customer getCustomer(int id) {
+        Customer customer = null;
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] columns = {
+                CustomerContract.CustomerTable.COLUMN_NAME,
+                CustomerContract.CustomerTable.COLUMN_ID,
+                CustomerContract.CustomerTable.COLUMN_ADDRESS,
+                CustomerContract.CustomerTable.COLUMN_PHONE,
+        };
+        String selection = CustomerContract.CustomerTable.COLUMN_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(id) };
+
+        Cursor cursor = db.query(
+                CustomerContract.CustomerTable.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+
+        if (cursor.moveToFirst()) {
+            String name = cursor.getString(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_NAME));
+            int _id   = cursor.getInt(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_ID));
+            String address = cursor.getString(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_ADDRESS));
+            String phone = cursor.getString(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_PHONE));
+
+            customer = new Customer();
+            customer.setName(name);
+            customer.setId(_id);
+            customer.setAddress(address);
+            customer.setPhone(phone);
+        }
+        return customer;
+    }
+
+
+
     public ArrayList<Customer> getCustomers() {
         ArrayList<Customer> customers = new ArrayList<>();
 
@@ -55,6 +118,7 @@ public class AHSDBHelper extends SQLiteOpenHelper {
 
         String[] columns = {
                 CustomerContract.CustomerTable.COLUMN_NAME,
+                CustomerContract.CustomerTable.COLUMN_ID,
                 CustomerContract.CustomerTable.COLUMN_ADDRESS,
                 CustomerContract.CustomerTable.COLUMN_PHONE,
         };
@@ -74,11 +138,13 @@ public class AHSDBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 String name = cursor.getString(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_NAME));
+                int id   = cursor.getInt(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_ID));
                 String address = cursor.getString(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_ADDRESS));
                 String phone = cursor.getString(cursor.getColumnIndex(CustomerContract.CustomerTable.COLUMN_PHONE));
 
                 Customer customer = new Customer();
                 customer.setName(name);
+                customer.setId(id);
                 customer.setAddress(address);
                 customer.setPhone(phone);
 

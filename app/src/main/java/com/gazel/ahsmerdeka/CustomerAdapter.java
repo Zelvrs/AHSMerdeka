@@ -18,11 +18,13 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     private Context mContext;
     private int mResource;
     private ArrayList<Customer> mCustomers;
+    private OnClickButtonListener mOnClicButtonListener;
 
-    public CustomerAdapter(Context context, int resource, ArrayList<Customer> customers) {
+    public CustomerAdapter(Context context, int resource, ArrayList<Customer> customers, OnClickButtonListener onClickButtonListener) {
         mContext = context;
         mResource = resource;
        mCustomers = customers;
+       mOnClicButtonListener = onClickButtonListener;
     }
 
     @NonNull
@@ -37,12 +39,26 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Customer customer = mCustomers.get(position);
 
         holder.tvName.setText(customer.getName());
         holder.tvAddress.setText(customer.getAddress());
         holder.tvPhone.setText(customer.getPhone());
+
+        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnClicButtonListener.onEdit(holder.getAdapterPosition());
+            }
+        });
+
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnClicButtonListener.onDelete(holder.getAdapterPosition());
+            }
+        });
 
     }
 
@@ -67,7 +83,11 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
-    } {
+    }
+
+    public interface OnClickButtonListener {
+        void onEdit(int position);
+        void onDelete(int position);
 
     }
 }
