@@ -8,4 +8,6 @@
     <string name="phone">Telepon</string>
     <string name="name">Nama</string>
     <string name="add_customers">Tambah Pelanggan</string>
+    <string name="edit">Ubah</string>
+    <string name="delete">Hapus</string>
 </resources>
